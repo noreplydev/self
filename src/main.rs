@@ -9,6 +9,7 @@ impl Instruction {
 }
 
 enum OpCode {
+    Zero,
     LoadConst,
 }
 
@@ -17,12 +18,27 @@ struct Vm {
 }
 
 impl Vm {
-    fn new(instructions: Vec<Instruction>) -> Vm {
-        Vm { instructions }
+    fn new(instructions: Vec<u32>) -> Vm {
+        let mut semantic_instructions = vec![];
+        for instruction in instructions {
+            match instruction {
+                0 => semantic_instructions.push(Instruction::new(OpCode::Zero)),
+                0x01 => semantic_instructions.push(Instruction::new(OpCode::LoadConst)),
+                _ => {}
+            };
+        }
+
+        Vm {
+            instructions: semantic_instructions,
+        }
     }
+
     fn run(&self) {
         for instruction in &self.instructions {
             match instruction.opcode {
+                OpCode::Zero => {
+                    println!("Zero");
+                }
                 OpCode::LoadConst => {
                     println!("LoadConst");
                 }
@@ -32,8 +48,8 @@ impl Vm {
 }
 
 fn main() {
-    let instructions = vec![Instruction::new(OpCode::LoadConst)];
+    let instructions = vec![0x01, 0, 0, 0, 0, 0x01];
     let vm = Vm::new(instructions);
 
-    vm.run()
+    vm.run();
 }

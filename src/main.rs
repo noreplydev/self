@@ -12,14 +12,18 @@ struct Vm {
 impl Vm {
     fn new(instructions: Vec<u8>) -> Vm {
         let mut semantic_instructions = vec![];
-        for instruction in instructions {
-            match &instruction {
+        let mut pc = 0;
+
+        while pc < instructions.len() {
+            match instructions[pc] {
                 // zero
                 0 => semantic_instructions.push(Instruction::Zero),
                 // loadConst
                 0x01 => {}
                 _ => {}
             };
+
+            pc += 1;
         }
 
         Vm {

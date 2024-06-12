@@ -1,3 +1,7 @@
+mod development;
+
+use development::*;
+
 struct Instruction {
     opcode: OpCode,
 }
@@ -18,7 +22,7 @@ struct Vm {
 }
 
 impl Vm {
-    fn new(instructions: Vec<u32>) -> Vm {
+    fn new(instructions: Vec<u8>) -> Vm {
         let mut semantic_instructions = vec![];
         for instruction in instructions {
             match instruction {
@@ -48,8 +52,9 @@ impl Vm {
 }
 
 fn main() {
-    let instructions = vec![0x01, 0, 0, 0, 0, 0x01];
-    let vm = Vm::new(instructions);
+    let mut instructions: Vec<u8> = vec![0x01];
+    instructions.extend_from_slice(&u64_to_bytes(14));
 
+    let vm = Vm::new(instructions);
     vm.run();
 }

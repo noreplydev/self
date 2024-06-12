@@ -1,21 +1,8 @@
 mod development;
+mod instructions;
 
 use development::*;
-
-struct Instruction {
-    opcode: OpCode,
-}
-
-impl Instruction {
-    fn new(opcode: OpCode) -> Instruction {
-        Instruction { opcode }
-    }
-}
-
-enum OpCode {
-    Zero,
-    LoadConst,
-}
+use instructions::*;
 
 struct Vm {
     instructions: Vec<Instruction>,
@@ -25,9 +12,11 @@ impl Vm {
     fn new(instructions: Vec<u8>) -> Vm {
         let mut semantic_instructions = vec![];
         for instruction in instructions {
-            match instruction {
+            match &instruction {
+                // zero
                 0 => semantic_instructions.push(Instruction::new(OpCode::Zero)),
-                0x01 => semantic_instructions.push(Instruction::new(OpCode::LoadConst)),
+                // loadConst
+                0x01 => {}
                 _ => {}
             };
         }
@@ -39,11 +28,11 @@ impl Vm {
 
     fn run(&self) {
         for instruction in &self.instructions {
-            match instruction.opcode {
+            match &instruction.opcode {
                 OpCode::Zero => {
                     println!("Zero");
                 }
-                OpCode::LoadConst => {
+                OpCode::LoadConst { dataType } => {
                     println!("LoadConst");
                 }
             }

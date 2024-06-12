@@ -6,6 +6,7 @@ use instructions::*;
 
 struct Vm {
     instructions: Vec<Instruction>,
+    pc: usize,
 }
 
 impl Vm {
@@ -14,7 +15,7 @@ impl Vm {
         for instruction in instructions {
             match &instruction {
                 // zero
-                0 => semantic_instructions.push(Instruction::new(OpCode::Zero)),
+                0 => semantic_instructions.push(Instruction::Zero),
                 // loadConst
                 0x01 => {}
                 _ => {}
@@ -23,19 +24,23 @@ impl Vm {
 
         Vm {
             instructions: semantic_instructions,
+            pc: 0,
         }
     }
 
-    fn run(&self) {
-        for instruction in &self.instructions {
-            match &instruction.opcode {
-                OpCode::Zero => {
+    fn run(&mut self) {
+        while self.pc < self.instructions.len() {
+            let instruction = &self.instructions[self.pc];
+            match &instruction {
+                Instruction::Zero => {
                     println!("Zero");
                 }
-                OpCode::LoadConst { dataType } => {
+                Instruction::LoadConst { dataType } => {
                     println!("LoadConst");
                 }
             }
+
+            self.pc += 1; // increment program counter
         }
     }
 }
@@ -44,6 +49,6 @@ fn main() {
     let mut instructions: Vec<u8> = vec![0x01];
     instructions.extend_from_slice(&u64_to_bytes(14));
 
-    let vm = Vm::new(instructions);
+    let mut vm = Vm::new(instructions);
     vm.run();
 }

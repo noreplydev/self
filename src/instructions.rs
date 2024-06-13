@@ -6,9 +6,5 @@ pub enum DataType {
 #[derive(Debug)]
 pub enum Instruction {
     Zero,
-    LoadConst {
-        reg: usize,
-        data_type: DataType,
-        value: Vec<u8>,
-    },
+    LoadConst { data_type: DataType, value: Vec<u8> },
 }

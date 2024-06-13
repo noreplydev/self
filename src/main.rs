@@ -7,7 +7,7 @@ use instructions::*;
 use types::*;
 
 struct Vm {
-    stack: Vec<Value>,
+    operand_stack: Vec<Value>,
     instructions: Vec<Instruction>,
     pc: usize,
 }
@@ -24,13 +24,12 @@ impl Vm {
                 // loadConst
                 0x01 => {
                     // check for register index, data type and value
-                    if pc >= bytecode.len() {
+                    if pc + 1 >= bytecode.len() {
                         panic!("Invalid LoadConst instruction at position {}", pc);
                     }
 
                     // todo: check if register position not exceds the limit
-                    let reg = bytecode[pc + 1] as usize;
-                    let data_type = match bytecode[pc + 2] {
+                    let data_type = match bytecode[pc + 1] {
                         0x01 => DataType::Int64,
                         _ => panic!("Unknown data type"),
                     };
@@ -38,20 +37,20 @@ impl Vm {
                     let value_length = match data_type {
                         DataType::Int64 => 8,
                     };
-                    if (pc + 2 + value_length) >= bytecode.len() {
-                        panic!("Invalid value size at position {}", pc + 3);
+                    if (pc + 1 + value_length) >= bytecode.len() {
+                        panic!("Invalid value size at position {}", pc + 2);
                     };
 
-                    let value_bytes = bytecode[pc + 3..pc + 3 + value_length].to_vec();
+                    let value_bytes = bytecode[pc + 2..pc + 2 + value_length].to_vec();
 
                     instructions.push(Instruction::LoadConst {
-                        reg,
                         data_type,
                         value: value_bytes,
                     });
+
                     // increment program counter
                     // by the seeked bytes
-                    pc += 2 + value_length;
+                    pc += 1 + value_length;
                 }
                 _ => {}
             };
@@ -60,7 +59,7 @@ impl Vm {
         }
 
         Vm {
-            stack: vec![],
+            operand_stack: vec![],
             instructions,
             pc: 0,
         }
@@ -73,12 +72,8 @@ impl Vm {
                 Instruction::Zero => {
                     println!("Zero");
                 }
-                Instruction::LoadConst {
-                    reg,
-                    data_type,
-                    value,
-                } => {
-                    println!("LoadConst ({reg}) <- {:?}", data_type);
+                Instruction::LoadConst { data_type, value } => {
+                    println!("LoadConst <- {:?}", data_type);
                 }
             }
 
@@ -88,8 +83,11 @@ impl Vm {
 }
 
 fn main() {
-    let mut instructions: Vec<u8> = vec![0x01, 0x00, 0x01];
+    let mut instructions: Vec<u8> = vec![0x01, 0x01];
     instructions.extend_from_slice(&u64_to_bytes(14));
+    instructions.push(0x01);
+    instructions.push(0x01);
+    instructions.extend_from_slice(&u64_to_bytes(20));
 
     let mut vm = Vm::new(instructions);
     vm.run();

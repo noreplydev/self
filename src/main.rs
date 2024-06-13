@@ -73,7 +73,7 @@ impl Vm {
                     println!("Zero");
                 }
                 Instruction::LoadConst { data_type, value } => {
-                    let mut printable_value;
+                    let printable_value;
                     self.operand_stack.push(match data_type {
                         DataType::Int64 => {
                             let value = i64::from_le_bytes(

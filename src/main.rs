@@ -1,10 +1,13 @@
 mod development;
 mod instructions;
+mod types;
 
 use development::*;
 use instructions::*;
+use types::*;
 
 struct Vm {
+    stack: Vec<Value>,
     instructions: Vec<Instruction>,
     pc: usize,
 }
@@ -57,6 +60,7 @@ impl Vm {
         }
 
         Vm {
+            stack: vec![],
             instructions,
             pc: 0,
         }

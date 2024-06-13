@@ -73,7 +73,20 @@ impl Vm {
                     println!("Zero");
                 }
                 Instruction::LoadConst { data_type, value } => {
-                    println!("LoadConst <- {:?}", data_type);
+                    let mut printable_value;
+                    self.operand_stack.push(match data_type {
+                        DataType::Int64 => {
+                            let value = i64::from_le_bytes(
+                                value
+                                    .as_slice()
+                                    .try_into()
+                                    .expect("Provided value is incorrect"),
+                            );
+                            printable_value = value;
+                            Value::I64(I64::new(value))
+                        }
+                    });
+                    println!("LoadConst <- {:?}({printable_value})", data_type);
                 }
             }
 

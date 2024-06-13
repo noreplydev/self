@@ -19,9 +19,9 @@ impl Vm {
 
         while pc < bytecode.len() {
             match bytecode[pc] {
-                // zero
+                // ZERO
                 0 => instructions.push(Instruction::Zero),
-                // loadConst
+                // LOAD_CONST
                 0x01 => {
                     // check for register index, data type and value
                     if pc + 1 >= bytecode.len() {
@@ -52,6 +52,8 @@ impl Vm {
                     // by the seeked bytes
                     pc += 1 + value_length;
                 }
+                // ADD
+                0x02 => instructions.push(Instruction::Add),
                 _ => {}
             };
 
@@ -86,7 +88,25 @@ impl Vm {
                             Value::I64(I64::new(value))
                         }
                     });
-                    println!("LoadConst <- {:?}({printable_value})", data_type);
+                    println!("LOAD_CONST <- {:?}({printable_value})", data_type);
+                }
+                Instruction::Add => {
+                    let right_operand = self.operand_stack.pop();
+                    let left_operand = self.operand_stack.pop();
+
+                    if left_operand.is_none() || right_operand.is_none() {
+                        panic!("Operands stack underflow");
+                    };
+
+                    match left_operand.unwrap() {
+                        Value::I64(l) => match right_operand.unwrap() {
+                            Value::I64(r) => {
+                                self.operand_stack
+                                    .push(Value::I64(I64::new(l.value + r.value)));
+                                println!("ADD -> {:?}", l.value + r.value);
+                            }
+                        },
+                    }
                 }
             }
 
@@ -101,6 +121,7 @@ fn main() {
     instructions.push(0x01);
     instructions.push(0x01);
     instructions.extend_from_slice(&u64_to_bytes(20));
+    instructions.push(0x02);
 
     let mut vm = Vm::new(instructions);
     vm.run();

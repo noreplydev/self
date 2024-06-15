@@ -93,14 +93,12 @@ impl Vm {
                         panic!("Operands stack underflow");
                     };
 
-                    match left_operand.unwrap() {
-                        Value::I64(l) => match right_operand.unwrap() {
-                            Value::I64(r) => {
-                                self.operand_stack
-                                    .push(Value::I64(I64::new(l.value + r.value)));
-                                println!("ADD -> {:?}", l.value + r.value);
-                            }
-                        },
+                    match (left_operand.unwrap(), right_operand.unwrap()) {
+                        (Value::I64(l), Value::I64(r)) => {
+                            self.operand_stack
+                                .push(Value::I64(I64::new(l.value + r.value)));
+                            println!("ADD -> {:?}", l.value + r.value);
+                        }
                     }
                 }
             }

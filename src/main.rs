@@ -1,6 +1,5 @@
 mod development;
 mod instructions;
-mod test;
 mod types;
 mod vm;
 

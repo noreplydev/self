@@ -1,4 +1,6 @@
-use crate::{u64_to_bytes, Vm};
+use crate::vm::Vm;
+
+use super::u64_to_bytes;
 
 pub fn run_bytecode() {
     let mut instructions: Vec<u8> = vec![0x01, 0x01];

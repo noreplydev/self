@@ -25,12 +25,14 @@ impl Vm {
 
                     // todo: check if register position not exceds the limit
                     let data_type = match bytecode[pc + 1] {
+                        0x00 => DataType::Nothing,
                         0x01 => DataType::Int64,
                         _ => panic!("Unknown data type"),
                     };
 
                     let value_length = match data_type {
                         DataType::Int64 => 8,
+                        DataType::Nothing => 0,
                     };
                     if (pc + 1 + value_length) >= bytecode.len() {
                         panic!("Invalid value size at position {}", pc + 2);
@@ -79,8 +81,12 @@ impl Vm {
                                     .try_into()
                                     .expect("Provided value is incorrect"),
                             );
-                            printable_value = value;
+                            printable_value = value.to_string();
                             Value::I64(I64::new(value))
+                        }
+                        DataType::Nothing => {
+                            printable_value = "nothing".to_string();
+                            Value::Nothing
                         }
                     });
                     println!("LOAD_CONST <- {:?}({printable_value})", data_type);
@@ -105,6 +111,12 @@ impl Vm {
                             self.operand_stack
                                 .push(Value::I64(I64::new(l.value + r.value)));
                             println!("ADD -> {:?}", l.value + r.value);
+                        }
+                        (Value::Nothing, _) => {
+                            println!("ADD -> nothing");
+                        }
+                        (_, Value::Nothing) => {
+                            println!("ADD -> nothing");
                         }
                     }
                 }

@@ -93,7 +93,14 @@ impl Vm {
                         panic!("Operands stack underflow");
                     };
 
-                    match (left_operand.unwrap(), right_operand.unwrap()) {
+                    let operands = (left_operand.unwrap(), right_operand.unwrap());
+                    let operands_types = (operands.0.get_type(), operands.1.get_type());
+
+                    if operands_types.0 != operands_types.1 {
+                        panic!("Operands type mismatch");
+                    }
+
+                    match operands {
                         (Value::I64(l), Value::I64(r)) => {
                             self.operand_stack
                                 .push(Value::I64(I64::new(l.value + r.value)));

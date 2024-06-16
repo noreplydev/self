@@ -1,9 +1,4 @@
 #[derive(Debug)]
-pub enum Value {
-    I64(I64),
-}
-
-#[derive(Debug)]
 pub struct I64 {
     pub value: i64,
 }

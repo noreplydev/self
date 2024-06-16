@@ -1,7 +1,4 @@
-#[derive(Debug)]
-pub enum DataType {
-    Int64,
-}
+use crate::types::DataType;
 
 #[derive(Debug)]
 pub enum Instruction {

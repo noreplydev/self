@@ -1,19 +1,18 @@
 mod development;
 mod instructions;
+mod test;
 mod types;
 mod vm;
+
+use std::env;
 
 use development::*;
 use vm::*;
 
 fn main() {
-    let mut instructions: Vec<u8> = vec![0x01, 0x01];
-    instructions.extend_from_slice(&u64_to_bytes(14));
-    instructions.push(0x01);
-    instructions.push(0x01);
-    instructions.extend_from_slice(&u64_to_bytes(20));
-    instructions.push(0x02);
-
-    let mut vm = Vm::new(instructions);
-    vm.run();
+    let args: Vec<String> = env::args().collect();
+    if args.len() > 1 && args[1] == "test" {
+        println!("Running test bytecode: \n");
+        test::run_bytecode();
+    }
 }

@@ -1,8 +1,6 @@
-use crate::vm::Vm;
+use self_vm::{utils::u64_to_bytes, vm::Vm};
 
-use super::u64_to_bytes;
-
-pub fn run_bytecode() {
+fn main() {
     let mut instructions: Vec<u8> = vec![0x01, 0x01];
     instructions.extend_from_slice(&u64_to_bytes(14));
     instructions.push(0x01);

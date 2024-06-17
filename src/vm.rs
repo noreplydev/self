@@ -26,7 +26,6 @@ impl Vm {
                         panic!("Invalid LoadConst instruction at position {}", pc);
                     }
 
-                    // todo: check if register position not exceds the limit
                     let data_type = match bytecode[pc + 1] {
                         0x00 => DataType::Nothing,
                         0x01 => DataType::Int64,
@@ -54,8 +53,23 @@ impl Vm {
                     // by the seeked bytes
                     pc += 1 + value_length;
                 }
+                // PRINT
+                0x02 => {
+                    // get u32 value. 4 bytes based on the type plus the current
+                    let value_length = 4;
+                    if pc + value_length >= bytecode.len() {
+                        panic!("Invalid print instruction at position {}", pc);
+                    }
+
+                    let value_bytes = &bytecode[pc + 1..pc + 5];
+                    let number_of_args = u32::from_le_bytes(
+                        value_bytes.try_into().expect("Provided value is incorrect"),
+                    );
+                    instructions.push(Instruction::Print { number_of_args });
+                    pc += 4;
+                }
                 // ADD
-                0x02 => instructions.push(Instruction::Add),
+                0x03 => instructions.push(Instruction::Add),
                 _ => {}
             };
 
@@ -139,6 +153,7 @@ impl Vm {
                         _ => unreachable!(),
                     }
                 }
+                Instruction::Print { number_of_args } => {}
             }
 
             self.pc += 1; // increment program counter

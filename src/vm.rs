@@ -153,7 +153,20 @@ impl Vm {
                         _ => unreachable!(),
                     }
                 }
-                Instruction::Print { number_of_args } => {}
+                Instruction::Print { number_of_args } => {
+                    let mut counter = 0;
+                    while &counter < number_of_args {
+                        if let Some(v) = self.operand_stack.pop() {
+                            match v {
+                                Value::I64(i) => println!("PRINT -> {}", i.value),
+                                Value::U32(u) => println!("PRINT -> {}", u.value),
+                                Value::Nothing => println!("PRINT -> nothing"),
+                                // Handle other types as necessary
+                            }
+                        }
+                        counter += 1;
+                    }
+                }
             }
 
             self.pc += 1; // increment program counter

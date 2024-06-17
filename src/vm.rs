@@ -1,3 +1,6 @@
+use self::i64::I64;
+use self::u32::U32;
+
 use super::instructions::*;
 use super::types::*;
 
@@ -27,11 +30,13 @@ impl Vm {
                     let data_type = match bytecode[pc + 1] {
                         0x00 => DataType::Nothing,
                         0x01 => DataType::Int64,
+                        0x02 => DataType::U32,
                         _ => panic!("Unknown data type"),
                     };
 
                     let value_length = match data_type {
                         DataType::Int64 => 8,
+                        DataType::U32 => 4,
                         DataType::Nothing => 0,
                     };
                     if (pc + 1 + value_length) >= bytecode.len() {
@@ -84,6 +89,16 @@ impl Vm {
                             printable_value = value.to_string();
                             Value::I64(I64::new(value))
                         }
+                        DataType::U32 => {
+                            let value = u32::from_le_bytes(
+                                value
+                                    .as_slice()
+                                    .try_into()
+                                    .expect("Provided value is incorrect"),
+                            );
+                            printable_value = value.to_string();
+                            Value::U32(U32::new(value))
+                        }
                         DataType::Nothing => {
                             printable_value = "nothing".to_string();
                             Value::Nothing
@@ -103,7 +118,7 @@ impl Vm {
                     let operands_types = (operands.0.get_type(), operands.1.get_type());
 
                     if operands_types.0 != operands_types.1 {
-                        panic!("Operands type mismatch");
+                        panic!("No explicit coercion. Operands type mismatch.");
                     }
 
                     match operands {
@@ -112,12 +127,16 @@ impl Vm {
                                 .push(Value::I64(I64::new(l.value + r.value)));
                             println!("ADD -> {:?}", l.value + r.value);
                         }
-                        (Value::Nothing, _) => {
+                        (Value::U32(l), Value::U32(r)) => {
+                            self.operand_stack
+                                .push(Value::U32(U32::new(l.value + r.value)));
+                            println!("ADD -> {:?}", l.value + r.value);
+                        }
+                        (Value::Nothing, Value::Nothing) => {
+                            self.operand_stack.push(Value::Nothing);
                             println!("ADD -> nothing");
                         }
-                        (_, Value::Nothing) => {
-                            println!("ADD -> nothing");
-                        }
+                        _ => unreachable!(),
                     }
                 }
             }

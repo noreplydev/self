@@ -163,6 +163,8 @@ impl Vm {
                                 Value::Nothing => println!("PRINT -> nothing"),
                                 // Handle other types as necessary
                             }
+                        } else {
+                            panic!("Cannot get arg to print")
                         }
                         counter += 1;
                     }

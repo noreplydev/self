@@ -1,3 +1,4 @@
+use self::i32::I32;
 use self::i64::I64;
 use self::u32::U32;
 
@@ -34,6 +35,7 @@ impl Vm {
                     };
 
                     let value_length = match data_type {
+                        DataType::I32 => 4,
                         DataType::I64 => 8,
                         DataType::U32 => 4,
                         DataType::Nothing => 0,
@@ -93,6 +95,16 @@ impl Vm {
                 Instruction::LoadConst { data_type, value } => {
                     let printable_value;
                     self.operand_stack.push(match data_type {
+                        DataType::I32 => {
+                            let value = i32::from_le_bytes(
+                                value
+                                    .as_slice()
+                                    .try_into()
+                                    .expect("Provided value is incorrect"),
+                            );
+                            printable_value = value.to_string();
+                            Value::I32(I32::new(value))
+                        }
                         DataType::I64 => {
                             let value = i64::from_le_bytes(
                                 value
@@ -136,6 +148,11 @@ impl Vm {
                     }
 
                     match operands {
+                        (Value::I32(l), Value::I32(r)) => {
+                            self.operand_stack
+                                .push(Value::I32(I32::new(l.value + r.value)));
+                            println!("ADD -> {:?}", l.value + r.value);
+                        }
                         (Value::I64(l), Value::I64(r)) => {
                             self.operand_stack
                                 .push(Value::I64(I64::new(l.value + r.value)));
@@ -158,6 +175,7 @@ impl Vm {
                     while &counter < number_of_args {
                         if let Some(v) = self.operand_stack.pop() {
                             match v {
+                                Value::I32(i) => println!("PRINT -> {}", i.value),
                                 Value::I64(i) => println!("PRINT -> {}", i.value),
                                 Value::U32(u) => println!("PRINT -> {}", u.value),
                                 Value::Nothing => println!("PRINT -> nothing"),

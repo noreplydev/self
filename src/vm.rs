@@ -30,8 +30,10 @@ impl Vm {
 
                     let data_type = match bytecode[pc + 1] {
                         0x00 => DataType::Nothing,
-                        0x01 => DataType::I64,
-                        0x02 => DataType::U32,
+                        0x01 => DataType::U32,
+                        0x02 => DataType::U64,
+                        0x03 => DataType::I32,
+                        0x04 => DataType::I64,
                         _ => panic!("Unknown data type"),
                     };
 

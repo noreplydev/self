@@ -14,7 +14,7 @@ pub enum Value {
 impl Value {
     pub fn get_type(&self) -> DataType {
         match self {
-            Value::I64(_) => DataType::Int64,
+            Value::I64(_) => DataType::I64,
             Value::U32(_) => DataType::U32,
             Value::Nothing => DataType::Nothing,
         }
@@ -23,7 +23,7 @@ impl Value {
 
 #[derive(Debug)]
 pub enum DataType {
-    Int64,
+    I64,
     U32,
     Nothing,
 }
@@ -31,7 +31,7 @@ pub enum DataType {
 impl PartialEq for DataType {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (DataType::Int64, DataType::Int64) => true,
+            (DataType::I64, DataType::I64) => true,
             (DataType::U32, DataType::U32) => true,
             (DataType::Nothing, DataType::Nothing) => true,
             _ => false,

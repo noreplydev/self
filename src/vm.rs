@@ -28,13 +28,13 @@ impl Vm {
 
                     let data_type = match bytecode[pc + 1] {
                         0x00 => DataType::Nothing,
-                        0x01 => DataType::Int64,
+                        0x01 => DataType::I64,
                         0x02 => DataType::U32,
                         _ => panic!("Unknown data type"),
                     };
 
                     let value_length = match data_type {
-                        DataType::Int64 => 8,
+                        DataType::I64 => 8,
                         DataType::U32 => 4,
                         DataType::Nothing => 0,
                     };
@@ -93,7 +93,7 @@ impl Vm {
                 Instruction::LoadConst { data_type, value } => {
                     let printable_value;
                     self.operand_stack.push(match data_type {
-                        DataType::Int64 => {
+                        DataType::I64 => {
                             let value = i64::from_le_bytes(
                                 value
                                     .as_slice()

@@ -5,6 +5,7 @@
 
 - `0x00`: zero
 - `0x01`: load_const
-  - `0x01`: int64
+  - `0x01`: i64
+  - `0x02`: u64
 - `0x02`: print
 - `0x03`: add

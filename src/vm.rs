@@ -1,6 +1,7 @@
 use self::i32::I32;
 use self::i64::I64;
 use self::u32::U32;
+use self::u64::U64;
 
 use super::instructions::*;
 use super::types::*;
@@ -38,6 +39,7 @@ impl Vm {
                         DataType::I32 => 4,
                         DataType::I64 => 8,
                         DataType::U32 => 4,
+                        DataType::U64 => 8,
                         DataType::Nothing => 0,
                     };
                     if (pc + 1 + value_length) >= bytecode.len() {
@@ -125,6 +127,16 @@ impl Vm {
                             printable_value = value.to_string();
                             Value::U32(U32::new(value))
                         }
+                        DataType::U64 => {
+                            let value = u64::from_le_bytes(
+                                value
+                                    .as_slice()
+                                    .try_into()
+                                    .expect("Provided value is incorrect"),
+                            );
+                            printable_value = value.to_string();
+                            Value::U64(U64::new(value))
+                        }
                         DataType::Nothing => {
                             printable_value = "nothing".to_string();
                             Value::Nothing
@@ -175,9 +187,10 @@ impl Vm {
                     while &counter < number_of_args {
                         if let Some(v) = self.operand_stack.pop() {
                             match v {
-                                Value::I32(i) => println!("PRINT -> {}", i.value),
-                                Value::I64(i) => println!("PRINT -> {}", i.value),
-                                Value::U32(u) => println!("PRINT -> {}", u.value),
+                                Value::I32(x) => println!("PRINT -> {}", x.value),
+                                Value::I64(x) => println!("PRINT -> {}", x.value),
+                                Value::U32(x) => println!("PRINT -> {}", x.value),
+                                Value::U64(x) => println!("PRINT -> {}", x.value),
                                 Value::Nothing => println!("PRINT -> nothing"),
                                 // Handle other types as necessary
                             }

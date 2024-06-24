@@ -19,42 +19,17 @@ impl Translator {
                 0 => instructions.push(Instruction::Zero),
                 // LOAD_CONST
                 0x01 => {
-                    // check for register index, data type and value
                     if self.pc + 1 >= self.bytecode.len() {
-                        panic!("Invalid LoadConst instruction at position {}", self.pc);
+                        panic!("Invalid LOAD_CONST instruction at position {}", self.pc);
                     }
 
-                    let data_type = match self.bytecode[self.pc + 1] {
-                        0x00 => DataType::Nothing,
-                        0x01 => DataType::U32,
-                        0x02 => DataType::U64,
-                        0x03 => DataType::I32,
-                        0x04 => DataType::I64,
-                        _ => panic!("Unknown data type"),
-                    };
-
-                    let value_length = match data_type {
-                        DataType::I32 => 4,
-                        DataType::I64 => 8,
-                        DataType::U32 => 4,
-                        DataType::U64 => 8,
-                        DataType::Nothing => 0,
-                    };
-                    if (self.pc + 1 + value_length) >= self.bytecode.len() {
-                        panic!("Invalid value size at position {}", self.pc + 2);
-                    };
-
-                    let value_bytes =
-                        self.bytecode[self.pc + 2..self.pc + 2 + value_length].to_vec();
+                    self.pc += 1;
+                    let (data_type, value_bytes) = self.get_value_length();
 
                     instructions.push(Instruction::LoadConst {
                         data_type,
                         value: value_bytes,
                     });
-
-                    // increment program counter
-                    // by the seeked bytes
-                    self.pc += 1 + value_length;
                 }
                 // PRINT
                 0x02 => {
@@ -80,5 +55,33 @@ impl Translator {
         }
 
         instructions
+    }
+
+    fn get_value_length(&mut self) -> (DataType, Vec<u8>) {
+        let data_type = match self.bytecode[self.pc] {
+            0x00 => DataType::Nothing,
+            0x01 => DataType::U32,
+            0x02 => DataType::U64,
+            0x03 => DataType::I32,
+            0x04 => DataType::I64,
+            _ => panic!("Unknown data type"),
+        };
+
+        let value_length = match data_type {
+            DataType::I32 => 4,
+            DataType::I64 => 8,
+            DataType::U32 => 4,
+            DataType::U64 => 8,
+            DataType::Nothing => 0,
+        };
+
+        if (self.pc + value_length) >= self.bytecode.len() {
+            panic!("Invalid value size at position {}", self.pc + 1);
+        };
+
+        let value_bytes = self.bytecode[self.pc + 1..self.pc + 1 + value_length].to_vec();
+        self.pc += value_length;
+
+        (data_type, value_bytes)
     }
 }

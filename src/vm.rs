@@ -1,13 +1,14 @@
+use super::instructions::*;
+use super::symbol_table::*;
+use super::types::*;
+
 use self::i32::I32;
 use self::i64::I64;
 use self::u32::U32;
 use self::u64::U64;
-
-use super::instructions::*;
-use super::types::*;
-
 pub struct Vm {
     operand_stack: Vec<Value>,
+    symbol_table: SymbolTable,
     instructions: Vec<Instruction>,
     pc: usize,
 }
@@ -84,6 +85,7 @@ impl Vm {
 
         Vm {
             operand_stack: vec![],
+            symbol_table: SymbolTable::new(),
             instructions,
             pc: 0,
         }

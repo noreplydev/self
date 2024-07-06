@@ -85,6 +85,17 @@ impl Vm {
                     });
                     println!("LOAD_CONST <- {:?}({printable_value})", data_type);
                 }
+                Instruction::StoreVar {
+                    data_type,
+                    value,
+                    mutable,
+                } => {
+                    println!(
+                        "STORE_VAR: {:?}({})",
+                        data_type,
+                        if *mutable { "mutable" } else { "inmutable" }
+                    )
+                }
                 Instruction::Add => {
                     let right_operand = self.operand_stack.pop();
                     let left_operand = self.operand_stack.pop();

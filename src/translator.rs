@@ -48,6 +48,31 @@ impl Translator {
                 }
                 // ADD
                 0x03 => instructions.push(Instruction::Add),
+                // STORE_VAR
+                0x04 => {
+                    if self.pc + 1 >= self.bytecode.len() {
+                        panic!("Invalid STORE_VAR instruction at position {}.", self.pc);
+                    }
+
+                    self.pc += 1;
+                    let (data_type, value_bytes) = self.get_value_length();
+
+                    // 0x01 inmutable | 0x02 mutable
+                    self.pc += 1;
+                    let mutable = match self.bytecode[self.pc] {
+                        0x01 => false,
+                        0x02 => true,
+                        _ => {
+                            panic!("Invalid STORE_VAR instruction at position {}. Needed mutability property.", self.pc);
+                        }
+                    };
+
+                    instructions.push(Instruction::StoreVar {
+                        data_type,
+                        mutable,
+                        value: value_bytes,
+                    });
+                }
                 _ => {}
             };
 

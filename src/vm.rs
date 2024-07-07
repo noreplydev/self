@@ -136,20 +136,26 @@ impl Vm {
                 }
                 Instruction::Print { number_of_args } => {
                     let mut counter = 0;
+                    let mut args = vec![];
                     while &counter < number_of_args {
                         if let Some(v) = self.operand_stack.pop() {
-                            match v {
-                                Value::I32(x) => println!("PRINT -> {}", x.value),
-                                Value::I64(x) => println!("PRINT -> {}", x.value),
-                                Value::U32(x) => println!("PRINT -> {}", x.value),
-                                Value::U64(x) => println!("PRINT -> {}", x.value),
-                                Value::Nothing => println!("PRINT -> nothing"),
-                                // Handle other types as necessary
-                            }
+                            args.push(v);
                         } else {
                             panic!("Cannot get arg to print")
                         }
                         counter += 1;
+                    }
+
+                    args.reverse();
+                    for arg in args {
+                        match arg {
+                            Value::I32(x) => println!("PRINT -> {}", x.value),
+                            Value::I64(x) => println!("PRINT -> {}", x.value),
+                            Value::U32(x) => println!("PRINT -> {}", x.value),
+                            Value::U64(x) => println!("PRINT -> {}", x.value),
+                            Value::Nothing => println!("PRINT -> nothing"),
+                            // Handle other types as necessary
+                        }
                     }
                 }
             }

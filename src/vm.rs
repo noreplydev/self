@@ -1,4 +1,5 @@
 use crate::translator::Translator;
+use crate::utils::from_bytes::bytes_to_data;
 
 use super::instructions::*;
 use super::symbol_table::*;
@@ -8,6 +9,7 @@ use self::i32::I32;
 use self::i64::I64;
 use self::u32::U32;
 use self::u64::U64;
+
 pub struct Vm {
     operand_stack: Vec<Value>,
     symbol_table: SymbolTable,
@@ -36,53 +38,8 @@ impl Vm {
                     println!("Zero");
                 }
                 Instruction::LoadConst { data_type, value } => {
-                    let printable_value;
-                    self.operand_stack.push(match data_type {
-                        DataType::I32 => {
-                            let value = i32::from_le_bytes(
-                                value
-                                    .as_slice()
-                                    .try_into()
-                                    .expect("Provided value is incorrect"),
-                            );
-                            printable_value = value.to_string();
-                            Value::I32(I32::new(value))
-                        }
-                        DataType::I64 => {
-                            let value = i64::from_le_bytes(
-                                value
-                                    .as_slice()
-                                    .try_into()
-                                    .expect("Provided value is incorrect"),
-                            );
-                            printable_value = value.to_string();
-                            Value::I64(I64::new(value))
-                        }
-                        DataType::U32 => {
-                            let value = u32::from_le_bytes(
-                                value
-                                    .as_slice()
-                                    .try_into()
-                                    .expect("Provided value is incorrect"),
-                            );
-                            printable_value = value.to_string();
-                            Value::U32(U32::new(value))
-                        }
-                        DataType::U64 => {
-                            let value = u64::from_le_bytes(
-                                value
-                                    .as_slice()
-                                    .try_into()
-                                    .expect("Provided value is incorrect"),
-                            );
-                            printable_value = value.to_string();
-                            Value::U64(U64::new(value))
-                        }
-                        DataType::Nothing => {
-                            printable_value = "nothing".to_string();
-                            Value::Nothing
-                        }
-                    });
+                    let (value, printable_value) = bytes_to_data(data_type, value);
+                    self.operand_stack.push(value);
                     println!("LOAD_CONST <- {:?}({printable_value})", data_type);
                 }
                 Instruction::StoreVar {
@@ -94,7 +51,7 @@ impl Vm {
                         "STORE_VAR: {:?}({})",
                         data_type,
                         if *mutable { "mutable" } else { "inmutable" }
-                    )
+                    );
                 }
                 Instruction::Add => {
                     let right_operand = self.operand_stack.pop();

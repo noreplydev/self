@@ -1,5 +1,5 @@
 use self_vm::{
-    utils::{bytes_from_32, bytes_from_64, Number},
+    utils::{to_bytes::bytes_from_32, to_bytes::bytes_from_64, Number},
     vm::Vm,
 };
 

@@ -89,7 +89,7 @@ impl Translator {
             0x02 => DataType::U64,
             0x03 => DataType::I32,
             0x04 => DataType::I64,
-            0x05 => DataType::Str,
+            0x05 => DataType::Utf8,
             _ => panic!("Unknown data type"),
         };
 

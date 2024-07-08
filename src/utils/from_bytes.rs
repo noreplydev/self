@@ -47,6 +47,9 @@ pub fn bytes_to_data(data_type: &DataType, value: &Vec<u8>) -> (Value, String) {
             printable_value = "nothing".to_string();
             Value::Nothing
         }
+        _ => {
+            panic!("Unsupported type to get data from")
+        }
     };
 
     (value, printable_value)

@@ -89,6 +89,7 @@ impl Translator {
             0x02 => DataType::U64,
             0x03 => DataType::I32,
             0x04 => DataType::I64,
+            0x05 => DataType::Str,
             _ => panic!("Unknown data type"),
         };
 
@@ -98,6 +99,9 @@ impl Translator {
             DataType::U32 => 4,
             DataType::U64 => 8,
             DataType::Nothing => 0,
+            _ => {
+                panic!("Unsupported datatype")
+            }
         };
 
         if (self.pc + value_length) >= self.bytecode.len() {

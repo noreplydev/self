@@ -47,10 +47,13 @@ impl Vm {
                     value,
                     mutable,
                 } => {
+                    let (value, printable_value) = bytes_to_data(data_type, value);
+                    // todo: self.symbol_table.add_key_value("", value);
                     println!(
-                        "STORE_VAR: {:?}({})",
+                        "STORE_VAR: {} {:?}({})",
+                        if *mutable { "mut" } else { "inmutable" },
                         data_type,
-                        if *mutable { "mutable" } else { "inmutable" }
+                        printable_value
                     );
                 }
                 Instruction::Add => {
@@ -110,6 +113,7 @@ impl Vm {
                             Value::I64(x) => println!("PRINT -> {}", x.value),
                             Value::U32(x) => println!("PRINT -> {}", x.value),
                             Value::U64(x) => println!("PRINT -> {}", x.value),
+                            Value::Str(x) => println!("PRINT -> {}", x.value),
                             Value::Nothing => println!("PRINT -> nothing"),
                             // Handle other types as necessary
                         }

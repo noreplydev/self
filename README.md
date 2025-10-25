@@ -1,3 +1,5 @@
+> These were the early stages of [self-vm](https://selfvm.run). You can find more about it on [the new gitHub org](https://github.com/self-vm).
+
 # self
 
 ## opcode
